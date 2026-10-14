@@ -1,78 +1,150 @@
-This is the Official repository of **Spring Boot Microservices Professional eCommerce Masterclass** on Udemy
+git remote add origin https://github.com/ritkumar5690/E-Commerce.git
+git branch -M main
+git push -u origin main# E-commerce Microservices Platform
 
-# The Ultimate Java and Spring Boot Mastery
+This repository contains a Spring Boot-based microservices e-commerce project designed for learning, experimentation, and service-oriented application architecture. It demonstrates common patterns used in modern distributed systems, including service discovery, centralized configuration, API gateway routing, event-driven communication, authentication, tracing, and Docker-based infrastructure setup.
 
-Welcome to your one-stop-shop for mastering Java and Spring Boot! This repository offers a comprehensive learning experience with high-quality resources and community support. Dive into over 23+ hours of premium content, with everything you need to excel at Java and Spring Boot development.
+## Overview
 
-## 🎓 Learning Roadmap
+The application is organized as a set of independent Spring Boot services that work together to provide a complete e-commerce experience.
 
-Most of the courses below are available in **Udemy For Business**, so if you have subscription - you can get FREE access.
-Here’s a structured path to enhance your skills with detailed courses available:
+Key capabilities include:
 
-1. **[Spring Boot Full Stack By Building Complex Projects Step by Step](https://link.embarkx.com/spring-boot) (80+ Hours of Content)**
-2. **[Master Spring Boot Microservices](https://link.embarkx.com/microservices) (50+ Hours of Content)**
-3. **[Learn Java with 60+ Hours of Content](http://link.embarkx.com/java) (60+ Hours of Content)**
-4. **[Master Spring Security with React JS + OAuth2](https://link.embarkx.com/spring-security) (34+ Hours of Content)**
-5. **[Master IntelliJ IDEA](http://link.embarkx.com/intellij) (3+ Hours of Content)**
+- Service discovery with Spring Cloud Netflix Eureka
+- Centralized configuration with Spring Cloud Config Server
+- API routing and security with Spring Cloud Gateway
+- User management and authentication flows
+- Product catalog services
+- Order processing and orchestration
+- Notification handling via messaging
+- Observability with Zipkin, Prometheus, Loki, Grafana
+- Container-based local environment via Docker Compose
 
+## Architecture
 
-## 🌟 With All Our Courses You Gain Access To
+The project follows a microservices architecture with a shared infrastructure layer:
 
-- 📝 **Notes:** Detailed and downloadable notes to accompany each lesson.
-- 💻 **Source Code:** Full access to the source code used in the tutorials.
-- 🤔 **Doubt Solving:** Responsive instructor and community support.
-- 🎥 **High-Quality HD Videos:** Easy to understand, high-definition video tutorials.
-- 🔄 **Free Lifetime Updates:** Continuous updates to course content at no extra cost.
+- Gateway service: entry point for client requests
+- Eureka server: service registration and discovery
+- Config server: externalized configuration management
+- User service: user-related domain logic
+- Product service: catalog and product management
+- Order service: order processing and operations
+- Notification service: async processing and event-driven notifications
+- Supporting services: PostgreSQL, MongoDB, RabbitMQ, Kafka, Keycloak, Zipkin, monitoring tools
 
-## 📚 Why Choose This Mastery Series?
+## Repository Structure
 
-With this series, you're not just learning; you're preparing to dominate the field of Java and Spring Boot development. Our structured learning path ensures that you build your skills progressively, with each course designed to build on the knowledge gained from the previous one.
+- `configserver/` — Spring Cloud Config Server
+- `eureka/` — Eureka service registry
+- `gateway/` — API Gateway
+- `user/` — user service
+- `product/` — product service
+- `order/` — order service
+- `notification/` — notification service
+- `deploy/docker/` — Docker Compose files and infrastructure setup
+- `additional/` — supplementary course/demo experiments
+- `Spring Boot Microservices Professional eCommerce Masterclass.postman_collection.json` — API collection for testing requests
 
-### Join Us Now!
+## Tech Stack
 
-Start your journey today to become a master at Java and Spring Boot. Our community and expert instructors are here to support your learning every step of the way. **Enroll and start building your future, today!**
+- Java 21
+- Spring Boot 3.4.x
+- Spring Cloud 2024.x
+- Maven
+- Docker / Docker Compose
+- PostgreSQL
+- MongoDB
+- RabbitMQ
+- Kafka
+- Keycloak
+- Resilience4j
+- Micrometer + Zipkin
 
+## Prerequisites
 
+Before running the project, make sure you have:
 
+- JDK 21+
+- Maven
+- Docker and Docker Compose
+- Git
 
+## Quick Start
 
-# Usage Policy for Course Materials
+### 1. Build the Java services
 
-## Instructor Information
+From the project root, you can build all services with the provided script:
 
-**Instructor:** Faisal Memon  
-**Company:** [EmbarkX.com](http://www.embarkx.com)
+```bash
+chmod +x deploy/docker/build-projects.sh
+./deploy/docker/build-projects.sh
+```
 
-## Policy Overview
+You can also build each service individually with its local Maven wrapper:
 
-This document outlines the guidelines and restrictions concerning the use of course materials provided by EmbarkX, including but not limited to PDF presentations, code samples, and video tutorials.
+```bash
+cd configserver && ./mvnw clean package -DskipTests
+cd eureka && ./mvnw clean package -DskipTests
+cd gateway && ./mvnw clean package -DskipTests
+cd product && ./mvnw clean package -DskipTests
+cd order && ./mvnw clean package -DskipTests
+cd user && ./mvnw clean package -DskipTests
+cd notification && ./mvnw clean package -DskipTests
+```
 
-### 1. Personal Use Only
+### 2. Start infrastructure and application containers
 
-The materials provided in this course are intended for **your personal use only**. They are to be used solely for the purpose of learning and completing this course.
+```bash
+cd deploy/docker
+docker compose up -d
+```
 
-### 2. No Unauthorized Sharing or Distribution
+This starts the supporting stack and application services defined in the Docker Compose configuration.
 
-You are **not permitted** to share, distribute, or publicly post any course materials on any websites, social media platforms, or other public forums without prior written consent from the instructor.
+## Default Local Endpoints
 
-### 3. Intellectual Property
+After startup, common endpoints are exposed at:
 
-All course materials are protected by copyright laws and are the intellectual property of Faisal Memon and EmbarkX. Unauthorized use, reproduction, or distribution of these materials is **strictly prohibited**.
+- API Gateway: http://localhost:8080
+- Eureka Dashboard: http://localhost:8761
+- Config Server: http://localhost:8888
+- Keycloak: http://localhost:8443
+- RabbitMQ UI: http://localhost:15672
+- pgAdmin: http://localhost:5050
+- Zipkin: http://localhost:9411
 
-### 4. Reporting Violations
+## Running Individual Services Locally
 
-If you become aware of any unauthorized sharing or distribution of course materials, please report it immediately to [embarkxofficial@gmail.com](mailto:embarkxofficial@gmail.com).
+Each microservice includes its own Maven wrapper and can be started independently:
 
-### 5. Legal Action
+```bash
+cd eureka && ./mvnw spring-boot:run
+cd configserver && ./mvnw spring-boot:run
+cd gateway && ./mvnw spring-boot:run
+cd product && ./mvnw spring-boot:run
+cd order && ./mvnw spring-boot:run
+cd user && ./mvnw spring-boot:run
+cd notification && ./mvnw spring-boot:run
+```
 
-We reserve the right to take legal action against individuals or entities found to be violating this usage policy.
+## Testing APIs
 
-## Thank You
+Use the included Postman collection file:
 
-Thank you for respecting these guidelines and helping us maintain the integrity of our course materials.
+- `Spring Boot Microservices Professional eCommerce Masterclass.postman_collection.json`
 
-## Contact Information
+This collection can help validate the service routes and business flows during local development.
 
-- **Email:** [embarkxofficial@gmail.com](mailto:embarkxofficial@gmail.com)
-- **Website:** [www.embarkx.com](http://www.embarkx.com)
+## Notes
+
+This repository is intended as a learning and demonstration project. The codebase is useful for understanding distributed architecture patterns, but it is not a production-grade enterprise system by itself and may require additional hardening for real-world deployment.
+
+## Contributing
+
+Contributions are welcome if they improve clarity, fix issues, or add meaningful architecture improvements. Please keep changes focused and consistent with the project’s educational purpose.
+
+## License
+
+This project is provided for educational and learning purposes. Please respect the original authorship and licensing terms attached to the code and course materials in this repository.
 
